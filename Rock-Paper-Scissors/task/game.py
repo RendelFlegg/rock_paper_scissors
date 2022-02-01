@@ -10,9 +10,21 @@ def get_ratings(file_name):
     return dictionary
 
 
-options_dictionary = {'rock': {'win': 'scissors', 'lose': 'paper'},
-                      'paper': {'win': 'rock', 'lose': 'scissors'},
-                      'scissors': {'win': 'paper', 'lose': 'rock'}}
+def get_options(options_list):
+    dictionary = {}
+    number = len(options_list) // 2
+    extra_options = options_list * 3
+    for idx, option in enumerate(options_list):
+        extra_idx = idx + len(user_options)
+        win_list = extra_options[extra_idx - number:extra_idx]
+        lose_list = extra_options[extra_idx + 1:extra_idx + 1 + number]
+        dictionary[option] = {'win': win_list, 'lose': lose_list}
+    return dictionary
+
+
+options_dictionary = {'rock': {'win': ['scissors'], 'lose': ['paper']},
+                      'paper': {'win': ['rock'], 'lose': ['scissors']},
+                      'scissors': {'win': ['paper'], 'lose': ['rock']}}
 
 ratings_dictionary = get_ratings('rating.txt')
 
@@ -21,7 +33,10 @@ print(f'Hello, {username}')
 user_score = 0
 if username in ratings_dictionary:
     user_score = ratings_dictionary[username]
-
+user_options = input().split(',')
+if user_options != ['']:
+    options_dictionary = get_options(user_options)
+print("Okay, let's start")
 while True:
     user_move = input()
     if user_move not in list(options_dictionary.keys()) and user_move not in ['!exit', '!rating']:
@@ -38,7 +53,7 @@ while True:
         print(f'There is a draw ({user_move})')
         user_score += 50
     else:
-        if options_dictionary[user_move]['lose'] == computer_move:
+        if computer_move in options_dictionary[user_move]['lose']:
             print('Sorry, but the computer chose', computer_move)
         else:
             print(f'Well done. The computer chose {computer_move} and failed')
